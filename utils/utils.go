@@ -95,27 +95,6 @@ func AppendRowToFile(table string, row constants.Row, schema constants.Schema) {
 	f.Write(bin)
 }
 
-func LoadFromFile(table string) {
-	data, err := os.ReadFile("db/"+table + ".db")
-	if err != nil {
-		fmt.Println("File not found. Starting fresh.")
-		return
-	}
-
-	count := 0
-	rowSize := 0
-	for _, col := range constants.Schemas[table].Columns {
-		rowSize += col.Size
-	}
-
-	for i := 0; i+rowSize <= len(data); i += rowSize {
-		row := deserializeRow(data[i:i+rowSize], constants.Schemas[table])
-		constants.TableRows[table] = append(constants.TableRows[table], row)
-		count++
-	}
-	fmt.Printf("Loaded %d rows from file\n", count)
-}
-
 func LoadRowsFromFile(table string, schema constants.Schema) {
 	data, err := os.ReadFile("db/"+table + ".db")
 	if err != nil {
@@ -163,6 +142,7 @@ func ParseCSV(input string) []string {
 }
 
 func PrintHelp() {
+	fmt.Println()
 	fmt.Println("Supported commands:")
 	fmt.Println("select * from <table_name>")
 	fmt.Println("insert into <table_name> values (<values>)")
@@ -170,4 +150,5 @@ func PrintHelp() {
 	fmt.Println("create table <table_name> (<column_name> <column_type>)")
 	fmt.Println("show tables")
 	fmt.Println("drop table <table_name>")
+	fmt.Println()
 }
